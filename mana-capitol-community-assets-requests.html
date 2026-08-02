@@ -23,7 +23,7 @@
             --border-color: #e5e7eb;
             
             /* Accents */
-            --badge-bg: #e5e7eb; /* Neutral for Tower */
+            --badge-bg: #e5e7eb; 
             --badge-text: #374151;
         }
 
@@ -138,6 +138,20 @@
         }
 
         /* Status Colors */
+        .payment-container {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        
+        .payment-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
         .payment-badge {
             padding: 0.25rem 0.6rem;
             border-radius: 6px;
@@ -280,6 +294,7 @@
         let colMap = {};
         let currentFilter = 'All';
 
+        // Updated display labels to include the new columns
         const displayLabels = {
             timestamp: 'Booking Date',
             residentType: 'Resident Type',
@@ -291,7 +306,9 @@
             chairs: 'Chairs Requested',
             tables: 'Tables Requested',
             assets: 'Serving / Assets',
+            speaker: 'Speaker Required',
             status: 'Payment Status',
+            paidAmount: 'Paid Amount',
             poc: 'Point of Contact'
         };
 
@@ -332,7 +349,6 @@
         function parseEventDate(dateStr) {
             if (!dateStr || dateStr.toLowerCase() === 'tbd') return new Date(9999, 11, 31).getTime();
             
-            // Handle DD/MM/YYYY from Google Sheets
             if (dateStr.includes('/')) {
                 const parts = dateStr.split('/');
                 if (parts.length === 3) {
@@ -341,16 +357,16 @@
                 }
             }
             
-            // Fallback for standard JS parsing
             const fallback = new Date(dateStr).getTime();
             if (!isNaN(fallback)) return fallback;
 
-            return new Date(9999, 11, 31).getTime(); // Unparseable defaults to upcoming
+            return new Date(9999, 11, 31).getTime();
         }
 
         function processData(data) {
             const cols = data.table.cols.map(col => col ? col.label : '');
             
+            // Updated mappings strictly looking for new exact column naming
             colMap = {
                 timestamp: findColumnIndex(cols, ['timestamp']),
                 residentType: findColumnIndex(cols, ['residing', 'type', 'tenant', 'owner']),
@@ -362,13 +378,14 @@
                 chairs: findColumnIndex(cols, ['chair']),
                 tables: findColumnIndex(cols, ['table']),
                 assets: findColumnIndex(cols, ['asset', 'item', 'serving']),
-                status: findColumnIndex(cols, ['status', 'payment']),
+                speaker: findColumnIndex(cols, ['speaker']),
+                status: findColumnIndex(cols, ['paymentstatus', 'payment status', 'status']),
+                paidAmount: findColumnIndex(cols, ['paid amount', 'amount']),
                 poc: findColumnIndex(cols, ['poc', 'point of contact'])
             };
 
             let rawRows = data.table.rows.filter(row => row.c && !row.c.every(cell => cell === null));
             
-            // Keep original reverse chronological sort for display order
             allRows = rawRows.reverse(); 
             applyFiltersAndRender();
         }
@@ -405,7 +422,6 @@
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('request-count').innerHTML = `<strong>${currentViewRows.length}</strong> requests shown`;
 
-            // Setup Today's date for comparison (midnight)
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const todayTime = today.getTime();
@@ -422,12 +438,10 @@
                 const eventTime = getVal('time') || '';
                 const bookingDate = getVal('timestamp') || 'Unknown';
                 
-                // Status Logic
                 let rawStatus = getVal('status');
-                let displayStatus = rawStatus ? rawStatus.trim() : 'Not updated';
-                let statusClass = displayStatus.toUpperCase() === 'PAID' ? 'status-paid' : 'status-unpaid';
+                let displayStatus = rawStatus ? rawStatus.trim().toUpperCase() : 'NOT UPDATED';
+                let statusClass = displayStatus === 'PAID' ? 'status-paid' : 'status-unpaid';
 
-                // Date Logic
                 const parsedEventDate = parseEventDate(eventDate);
                 const isPast = parsedEventDate < todayTime;
 
@@ -446,7 +460,10 @@
                         <div class="row-right">
                             <div class="badges-stack">
                                 <div class="tower-badge">${tower} • ${flat}</div>
-                                <div class="payment-badge ${statusClass}">${displayStatus}</div>
+                                <div class="payment-container">
+                                    <span class="payment-label">Payment:</span>
+                                    <div class="payment-badge ${statusClass}">${displayStatus}</div>
+                                </div>
                             </div>
                             <div class="chevron">›</div>
                         </div>
@@ -462,7 +479,6 @@
                 }
             });
 
-            // Visibility Logic for sections based on count
             if (upcomingCount === 0) {
                 upcomingContainer.innerHTML = `<div style="text-align:center; padding: 2rem; color: #6b7280; font-size: 0.9rem;">No upcoming requests found.</div>`;
             }
@@ -484,7 +500,7 @@
                 
                 if (key === 'status') {
                     const isPaid = cellValue.trim().toUpperCase() === 'PAID';
-                    cellValue = `<span class="payment-badge ${isPaid ? 'status-paid' : 'status-unpaid'}">${cellValue}</span>`;
+                    cellValue = `<span class="payment-badge ${isPaid ? 'status-paid' : 'status-unpaid'}">${cellValue.toUpperCase()}</span>`;
                 } else {
                     cellValue = `<strong>${cellValue}</strong>`;
                 }
