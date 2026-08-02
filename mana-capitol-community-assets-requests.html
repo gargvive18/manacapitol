@@ -23,8 +23,8 @@
             --border-color: #e5e7eb;
             
             /* Accents */
-            --badge-bg: #d1fae5;
-            --badge-text: #065f46;
+            --badge-bg: #e5e7eb; /* Neutral for Tower */
+            --badge-text: #374151;
         }
 
         body {
@@ -71,9 +71,25 @@
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         #loader { text-align: center; padding: 3rem; color: var(--text-muted); }
 
-        /* --- Minimal List Row Section --- */
-        .container { max-width: 800px; margin: 0 auto 2rem auto; padding: 0 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        /* --- Main Layout & Sections --- */
+        .container { max-width: 800px; margin: 0 auto 2rem auto; padding: 0 1rem; }
+        
+        .section-title {
+            font-size: 1.15rem;
+            color: var(--text-main);
+            margin: 0 0 1rem 0;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
 
+        .rows-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* --- Minimal List Row --- */
         .list-row {
             background-color: var(--surface);
             border-radius: 12px;
@@ -93,138 +109,86 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        .row-left {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
+        .row-left { display: flex; flex-direction: column; gap: 0.35rem; }
 
-        .event-datetime {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .booking-date {
-            font-size: 0.8rem;
+        .date-row { display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
+        .date-label {
+            font-size: 0.75rem;
             color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            width: 95px;
         }
 
-        .row-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+        .event-text { font-size: 1rem; color: var(--text-main); }
+        .booking-text { font-size: 0.85rem; color: var(--text-secondary); }
 
+        .row-right { display: flex; align-items: center; gap: 1rem; }
+        .badges-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
         .tower-badge {
             background-color: var(--badge-bg);
             color: var(--badge-text);
-            padding: 0.4rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 0.05em;
             white-space: nowrap;
         }
 
-        .chevron {
-            color: #d1d5db;
-            font-size: 1.5rem;
-            font-weight: 300;
-            line-height: 1;
+        /* Status Colors */
+        .payment-badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            text-align: center;
         }
-        
-        .list-row:hover .chevron {
-            color: var(--accent-green);
-        }
+        .status-paid { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .status-unpaid { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        .chevron { color: #d1d5db; font-size: 1.5rem; font-weight: 300; line-height: 1; }
+        .list-row:hover .chevron { color: var(--accent-green); }
 
         /* --- Modal (Pop-up) Styles --- */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(17, 24, 39, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px);
+            z-index: 100; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
         }
-
         .modal-overlay.show { display: flex; opacity: 1; }
 
         .modal-content {
-            background: var(--surface);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
+            background: var(--surface); border-radius: 16px; width: 90%; max-width: 500px; max-height: 85vh;
+            display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px); transition: transform 0.3s ease;
         }
-
         .modal-overlay.show .modal-content { transform: translateY(0); }
 
         .modal-header {
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--header-bg);
-            color: white;
-            border-radius: 16px 16px 0 0;
+            padding: 1.25rem; border-bottom: 1px solid var(--border-color); display: flex;
+            justify-content: space-between; align-items: center; background-color: var(--header-bg);
+            color: white; border-radius: 16px 16px 0 0;
         }
-
         .modal-header h2 { margin: 0; font-size: 1.15rem; font-weight: 600; }
-
         .close-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            font-size: 1.25rem;
-            line-height: 1;
-            color: white;
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            transition: background-color 0.2s;
+            background: rgba(255,255,255,0.1); border: none; font-size: 1.25rem; line-height: 1;
+            color: white; cursor: pointer; padding: 0.25rem 0.5rem; border-radius: 6px; transition: background-color 0.2s;
         }
-
         .close-btn:hover { background-color: rgba(255,255,255,0.2); }
-
-        .modal-body {
-            padding: 0;
-            overflow-y: auto;
-        }
+        .modal-body { padding: 0; overflow-y: auto; }
 
         .detail-table { width: 100%; border-collapse: collapse; }
-        
-        .detail-table td {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            color: var(--text-main);
-        }
-
+        .detail-table td { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; color: var(--text-main); }
         .detail-table tr:last-child td { border-bottom: none; }
-
         .detail-table td:first-child {
-            font-weight: 600;
-            color: var(--text-secondary);
-            width: 40%;
-            background-color: #f9fafb;
-            border-right: 1px solid var(--border-color);
-            font-size: 0.85rem;
+            font-weight: 600; color: var(--text-secondary); width: 40%; background-color: #f9fafb;
+            border-right: 1px solid var(--border-color); font-size: 0.85rem;
         }
     </style>
 </head>
@@ -272,8 +236,21 @@
     </div>
 
     <div id="loader">Fetching latest requests...</div>
-    <div class="container" id="rows-container">
-        <!-- Minimal rows injected here -->
+    
+    <div class="container" id="main-container" style="display: none;">
+        
+        <!-- Current & Upcoming Section -->
+        <div id="upcoming-section">
+            <h3 class="section-title">Current & Upcoming</h3>
+            <div class="rows-group" id="upcoming-rows"></div>
+        </div>
+        
+        <!-- Past Events Section -->
+        <div id="past-section" style="margin-top: 2.5rem;">
+            <h3 class="section-title">Past Events</h3>
+            <div class="rows-group" id="past-rows"></div>
+        </div>
+
     </div>
 
     <!-- Modal Popup -->
@@ -303,7 +280,6 @@
         let colMap = {};
         let currentFilter = 'All';
 
-        // Friendly names for the Modal display
         const displayLabels = {
             timestamp: 'Booking Date',
             residentType: 'Resident Type',
@@ -315,13 +291,13 @@
             chairs: 'Chairs Requested',
             tables: 'Tables Requested',
             assets: 'Serving / Assets',
-            status: 'Status',
+            status: 'Payment Status',
             poc: 'Point of Contact'
         };
 
         async function fetchSheetData() {
             document.getElementById('loader').style.display = 'block';
-            document.getElementById('rows-container').innerHTML = '';
+            document.getElementById('main-container').style.display = 'none';
             document.getElementById('last-updated').innerText = 'Updating...';
 
             try {
@@ -353,10 +329,28 @@
             return -1;
         }
 
+        function parseEventDate(dateStr) {
+            if (!dateStr || dateStr.toLowerCase() === 'tbd') return new Date(9999, 11, 31).getTime();
+            
+            // Handle DD/MM/YYYY from Google Sheets
+            if (dateStr.includes('/')) {
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    const d = new Date(parts[2], parseInt(parts[1]) - 1, parts[0]);
+                    if (!isNaN(d.getTime())) return d.getTime();
+                }
+            }
+            
+            // Fallback for standard JS parsing
+            const fallback = new Date(dateStr).getTime();
+            if (!isNaN(fallback)) return fallback;
+
+            return new Date(9999, 11, 31).getTime(); // Unparseable defaults to upcoming
+        }
+
         function processData(data) {
             const cols = data.table.cols.map(col => col ? col.label : '');
             
-            // Map columns (Strictly ignoring Name, Email, and Phone contact)
             colMap = {
                 timestamp: findColumnIndex(cols, ['timestamp']),
                 residentType: findColumnIndex(cols, ['residing', 'type', 'tenant', 'owner']),
@@ -374,7 +368,7 @@
 
             let rawRows = data.table.rows.filter(row => row.c && !row.c.every(cell => cell === null));
             
-            // Sort by Timestamp/Date (newest first)
+            // Keep original reverse chronological sort for display order
             allRows = rawRows.reverse(); 
             applyFiltersAndRender();
         }
@@ -402,15 +396,22 @@
         }
 
         function renderRows() {
-            const container = document.getElementById('rows-container');
-            container.innerHTML = ''; 
+            const upcomingContainer = document.getElementById('upcoming-rows');
+            const pastContainer = document.getElementById('past-rows');
+            upcomingContainer.innerHTML = ''; 
+            pastContainer.innerHTML = '';
+            
             document.getElementById('loader').style.display = 'none';
+            document.getElementById('main-container').style.display = 'block';
             document.getElementById('request-count').innerHTML = `<strong>${currentViewRows.length}</strong> requests shown`;
 
-            if (currentViewRows.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 2rem; color: #6b7280;">No matching requests found.</div>`;
-                return;
-            }
+            // Setup Today's date for comparison (midnight)
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayTime = today.getTime();
+
+            let upcomingCount = 0;
+            let pastCount = 0;
 
             currentViewRows.forEach((row, index) => {
                 const getVal = (key) => colMap[key] !== -1 ? getCellValue(row.c[colMap[key]]) : '';
@@ -420,47 +421,78 @@
                 const eventDate = getVal('date') || 'TBD';
                 const eventTime = getVal('time') || '';
                 const bookingDate = getVal('timestamp') || 'Unknown';
+                
+                // Status Logic
+                let rawStatus = getVal('status');
+                let displayStatus = rawStatus ? rawStatus.trim() : 'Not updated';
+                let statusClass = displayStatus.toUpperCase() === 'PAID' ? 'status-paid' : 'status-unpaid';
+
+                // Date Logic
+                const parsedEventDate = parseEventDate(eventDate);
+                const isPast = parsedEventDate < todayTime;
 
                 const rowHTML = `
                     <div class="list-row" onclick="openModal(${index})">
                         <div class="row-left">
-                            <div class="event-datetime">
-                                📅 <span><strong>${eventDate}</strong> ${eventTime ? 'at ' + eventTime : ''}</span>
+                            <div class="date-row">
+                                <span class="date-label">Event Date:</span>
+                                <span class="event-text"><strong>${eventDate}</strong> ${eventTime ? '<span style="font-size: 0.85rem; color: #6b7280;">at ' + eventTime + '</span>' : ''}</span>
                             </div>
-                            <div class="booking-date">
-                                📝 Booked: ${bookingDate}
+                            <div class="date-row" style="margin-top: 0.25rem;">
+                                <span class="date-label">Booking Date:</span>
+                                <span class="booking-text">${bookingDate}</span>
                             </div>
                         </div>
                         <div class="row-right">
-                            <div class="tower-badge">${tower} • ${flat}</div>
+                            <div class="badges-stack">
+                                <div class="tower-badge">${tower} • ${flat}</div>
+                                <div class="payment-badge ${statusClass}">${displayStatus}</div>
+                            </div>
                             <div class="chevron">›</div>
                         </div>
                     </div>
                 `;
                 
-                container.innerHTML += rowHTML;
+                if (isPast) {
+                    pastContainer.innerHTML += rowHTML;
+                    pastCount++;
+                } else {
+                    upcomingContainer.innerHTML += rowHTML;
+                    upcomingCount++;
+                }
             });
-        }
 
-        // --- Modal Logic ---
+            // Visibility Logic for sections based on count
+            if (upcomingCount === 0) {
+                upcomingContainer.innerHTML = `<div style="text-align:center; padding: 2rem; color: #6b7280; font-size: 0.9rem;">No upcoming requests found.</div>`;
+            }
+            
+            document.getElementById('past-section').style.display = pastCount === 0 ? 'none' : 'block';
+        }
 
         window.openModal = function(rowIndex) {
             const rowData = currentViewRows[rowIndex].c;
             const modalTableBody = document.getElementById('modal-table-body');
             modalTableBody.innerHTML = ''; 
 
-            // Loop through our specific mapping to print details cleanly
             Object.keys(displayLabels).forEach(key => {
                 const colIndex = colMap[key];
-                if (colIndex === -1) return; // Skip if column doesn't exist in sheet
+                if (colIndex === -1) return; 
 
                 let cellValue = getCellValue(rowData[colIndex]);
-                if (!cellValue) return; // Skip empty fields
+                if (!cellValue) return; 
+                
+                if (key === 'status') {
+                    const isPaid = cellValue.trim().toUpperCase() === 'PAID';
+                    cellValue = `<span class="payment-badge ${isPaid ? 'status-paid' : 'status-unpaid'}">${cellValue}</span>`;
+                } else {
+                    cellValue = `<strong>${cellValue}</strong>`;
+                }
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${displayLabels[key]}</td>
-                    <td><strong>${cellValue}</strong></td>
+                    <td>${cellValue}</td>
                 `;
                 modalTableBody.appendChild(tr);
             });
@@ -476,12 +508,10 @@
             setTimeout(() => modal.style.display = 'none', 300);
         }
 
-        // Close modal if clicked outside
         document.getElementById('modal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
-        // Event Listeners for Filters
         document.getElementById('search-input').addEventListener('input', applyFiltersAndRender);
         document.querySelectorAll('.filter-chip').forEach(chip => {
             chip.addEventListener('click', (e) => {
