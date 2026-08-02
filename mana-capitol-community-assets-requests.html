@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mana Capitol - Asset Requests</title>
+    <title>Community Asset Request Log</title>
     <style>
         :root {
-            --primary: #4F46E5; /* Indigo */
-            --primary-hover: #4338ca;
+            /* Dark Green Theme */
+            --header-bg: #1e3128;
+            --header-darker: #14241d;
+            --accent-green: #3a8a5e;
+            --accent-hover: #2d704b;
+            --text-light: #e5e7eb;
+            --text-muted-dark: #9ca3af;
+            
+            /* Table & Body Theme */
             --surface: #ffffff;
             --background: #f3f4f6;
             --text-main: #111827;
@@ -24,50 +31,193 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white;
-            padding: 1.25rem 1rem;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        /* --- Header Section (Matching the Image) --- */
+        .top-section {
+            background-color: var(--header-bg);
+            color: var(--text-light);
+            padding: 1.5rem 1rem 1rem 1rem;
             position: sticky;
             top: 0;
             z-index: 10;
+            border-bottom: 4px solid var(--accent-green);
         }
 
-        h1 {
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .title-block h1 {
             margin: 0;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            letter-spacing: 0.5px;
+            color: #ffffff;
         }
 
+        .title-block p {
+            margin: 0.25rem 0 0 0;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted-dark);
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #a7f3d0;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+
+        /* --- Search & Controls --- */
+        .controls-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-wrapper {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted-dark);
+            width: 16px;
+            height: 16px;
+        }
+
+        #search-input {
+            width: 100%;
+            background-color: var(--header-darker);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            color: white;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #search-input::placeholder {
+            color: var(--text-muted-dark);
+        }
+
+        #search-input:focus {
+            border-color: var(--accent-green);
+        }
+
+        .refresh-btn {
+            background-color: var(--accent-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* --- Filter Chips --- */
+        .filter-chips {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            background-color: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-muted-dark);
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            border-color: rgba(255,255,255,0.4);
+            color: white;
+        }
+
+        .chip.active {
+            background-color: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* --- Stats Bar --- */
+        .stats-bar {
+            background-color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* --- Main Content --- */
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 1.5rem auto;
             padding: 0 1rem;
         }
 
         #loader {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
             color: var(--text-muted);
-            font-size: 0.95rem;
-            animation: pulse 2s infinite;
+            font-size: 1rem;
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.4; }
         }
 
-        /* Main Summary Table */
         .table-wrapper {
             background: var(--surface);
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             overflow: hidden;
-            display: none; /* Hidden until data loads */
+            display: none;
         }
 
         table {
@@ -99,15 +249,15 @@
             cursor: pointer;
         }
 
-        tbody tr:hover, tbody tr:active {
-            background-color: #f3f6ff;
+        tbody tr:hover {
+            background-color: #f0fdf4; /* Light green hover */
         }
 
         tbody tr:last-child td {
             border-bottom: none;
         }
 
-        /* Modal Styles */
+        /* --- Modal Styles --- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -137,7 +287,7 @@
             max-height: 85vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
             transform: translateY(20px);
             transition: transform 0.3s ease;
         }
@@ -152,29 +302,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background-color: var(--header-bg);
+            color: white;
+            border-radius: 16px 16px 0 0;
         }
 
         .modal-header h2 {
             margin: 0;
             font-size: 1.1rem;
-            color: var(--primary);
         }
 
         .close-btn {
-            background: none;
+            background: rgba(255,255,255,0.1);
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             line-height: 1;
-            color: var(--text-muted);
+            color: white;
             cursor: pointer;
-            padding: 0.2rem 0.5rem;
+            padding: 0.25rem 0.5rem;
             border-radius: 6px;
             transition: background-color 0.2s;
         }
 
         .close-btn:hover {
-            background-color: var(--background);
-            color: var(--text-main);
+            background-color: rgba(255,255,255,0.2);
         }
 
         .modal-body {
@@ -182,7 +333,6 @@
             overflow-y: auto;
         }
 
-        /* Detail Table inside Modal */
         .detail-table {
             width: 100%;
         }
@@ -203,9 +353,49 @@
 </head>
 <body>
 
-    <header>
-        <h1>Mana Capitol Asset Requests</h1>
-    </header>
+    <div class="top-section">
+        <div class="header-content">
+            <div class="header-title-row">
+                <div class="title-block">
+                    <h1>Community Asset Request Log</h1>
+                    <p>Mana Capitol • Live from Google Sheets</p>
+                </div>
+                <div class="live-indicator">
+                    <span class="live-dot"></span> live
+                </div>
+            </div>
+
+            <div class="controls-row">
+                <div class="search-wrapper">
+                    <!-- SVG Search Icon -->
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Search name, flat, event...">
+                </div>
+                <button class="refresh-btn" onclick="fetchSheetData()">
+                    <svg style="width:16px;height:16px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+
+            <div class="filter-chips" id="filter-chips">
+                <button class="chip active" data-filter="All">All</button>
+                <button class="chip" data-filter="T1">T1</button>
+                <button class="chip" data-filter="T2">T2</button>
+                <button class="chip" data-filter="T3">T3</button>
+                <button class="chip" data-filter="T4">T4</button>
+                <button class="chip" data-filter="T5">T5</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div id="request-count">Loading requests...</div>
+        <div id="last-updated">Updating...</div>
+    </div>
 
     <div class="container">
         <div id="loader">Fetching latest requests...</div>
@@ -220,7 +410,7 @@
                     </tr>
                 </thead>
                 <tbody id="table-body">
-                    <!-- Rows will be injected here -->
+                    <!-- Rows injected here -->
                 </tbody>
             </table>
         </div>
@@ -248,41 +438,117 @@
         const gid = '705406057';
         const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
 
+        let allRows = [];
+        let allColumns = [];
+        let currentFilter = 'All';
+        
+        // Indices for the summary table
+        let dateIdx = 0, flatIdx = 1, nameIdx = 2;
+
         async function fetchSheetData() {
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('table-wrapper').style.display = 'none';
+            document.getElementById('last-updated').innerText = 'Updating...';
+
             try {
                 const response = await fetch(url);
                 const text = await response.text();
                 const jsonString = text.match(/(?<=.*\().*(?=\);)/s)[0];
                 const data = JSON.parse(jsonString);
-                renderMainTable(data);
+                
+                processData(data);
+                
+                // Update timestamp
+                const now = new Date();
+                document.getElementById('last-updated').innerText = `Updated ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
             } catch (error) {
                 document.getElementById('loader').innerText = "Error loading data. Please check connection.";
                 console.error(error);
             }
         }
 
+        // Helper to extract clean cell value
         function getCellValue(cell) {
-            if (!cell) return '-';
-            return cell.f || cell.v || '-';
+            if (!cell) return '';
+            return (cell.f || cell.v || '').toString();
         }
 
-        function renderMainTable(data) {
-            const columns = data.table.cols.map(col => col ? col.label : '');
-            const rows = data.table.rows;
+        // Helper to extract a sortable Date from Google Visualization cells
+        function parseGvizDate(cell) {
+            if (!cell) return 0;
+            // Sometimes it comes as a string 'Date(2026,6,15)'
+            if (cell.v && typeof cell.v === 'string' && cell.v.includes('Date')) {
+                const match = cell.v.match(/Date\((\d+),(\d+),(\d+)/);
+                if (match) {
+                    // Note: gviz months are 0-indexed (0 = Jan)
+                    return new Date(match[1], match[2], match[3]).getTime();
+                }
+            }
+            // Fallback to formatted string parse
+            const formatted = cell.f || cell.v;
+            if (formatted) {
+                const parsed = new Date(formatted).getTime();
+                if (!isNaN(parsed)) return parsed;
+            }
+            return 0;
+        }
+
+        function processData(data) {
+            allColumns = data.table.cols.map(col => col ? col.label : '');
+            let rawRows = data.table.rows.filter(row => row.c && !row.c.every(cell => cell === null));
+
+            // Find column indices
+            dateIdx = Math.max(0, allColumns.findIndex(c => c.toLowerCase().includes('date') || c.toLowerCase().includes('timestamp')));
+            flatIdx = Math.max(1, allColumns.findIndex(c => c.toLowerCase().includes('flat') || c.toLowerCase().includes('unit') || c.toLowerCase().includes('tower')));
+            nameIdx = Math.max(2, allColumns.findIndex(c => c.toLowerCase().includes('name')));
+
+            // Sort logic: Latest date first (Descending order)
+            allRows = rawRows.sort((a, b) => {
+                const dateA = parseGvizDate(a.c[dateIdx]);
+                const dateB = parseGvizDate(b.c[dateIdx]);
+                return dateB - dateA;
+            });
+
+            applyFiltersAndRender();
+        }
+
+        function applyFiltersAndRender() {
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            
+            const filteredRows = allRows.filter(row => {
+                // 1. Check Quick Filter (Tower/Flat)
+                const flatVal = getCellValue(row.c[flatIdx]).toUpperCase();
+                const passesFilter = currentFilter === 'All' || flatVal.includes(currentFilter);
+                
+                // 2. Check Search Query (Look through all visible text)
+                let passesSearch = true;
+                if (searchQuery) {
+                    const rowText = row.c.map(cell => getCellValue(cell).toLowerCase()).join(' ');
+                    passesSearch = rowText.includes(searchQuery);
+                }
+
+                return passesFilter && passesSearch;
+            });
+
+            renderTable(filteredRows);
+        }
+
+        function renderTable(rowsToRender) {
             const tbody = document.getElementById('table-body');
+            tbody.innerHTML = ''; // Clear existing
             
             document.getElementById('loader').style.display = 'none';
             document.getElementById('table-wrapper').style.display = 'block';
 
-            // Attempt to automatically find the correct columns based on common names
-            // If it can't find exact names, it defaults to the first 3 columns (0, 1, 2)
-            const dateIdx = Math.max(0, columns.findIndex(c => c.toLowerCase().includes('date') || c.toLowerCase().includes('timestamp')));
-            const flatIdx = Math.max(1, columns.findIndex(c => c.toLowerCase().includes('flat') || c.toLowerCase().includes('unit')));
-            const nameIdx = Math.max(2, columns.findIndex(c => c.toLowerCase().includes('name')));
+            // Update stats
+            document.getElementById('request-count').innerHTML = `<strong>${rowsToRender.length}</strong> requests shown`;
 
-            rows.forEach(row => {
-                if (!row.c || row.c.every(cell => cell === null)) return;
+            if (rowsToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 2rem;">No matching requests found.</td></tr>`;
+                return;
+            }
 
+            rowsToRender.forEach(row => {
                 const tr = document.createElement('tr');
                 
                 const dateVal = getCellValue(row.c[dateIdx]);
@@ -296,19 +562,41 @@
                 `;
 
                 // Add click event to open modal with full row data
-                tr.onclick = () => openModal(row.c, columns);
+                tr.onclick = () => openModal(row.c);
                 tbody.appendChild(tr);
             });
         }
 
-        function openModal(rowData, columns) {
-            const modalTableBody = document.getElementById('modal-table-body');
-            modalTableBody.innerHTML = ''; // Clear previous data
+        // --- Event Listeners for Filtering & Search ---
 
-            columns.forEach((colName, index) => {
-                if (!colName) return; // Skip empty columns
+        document.getElementById('search-input').addEventListener('input', () => {
+            applyFiltersAndRender();
+        });
+
+        const chips = document.querySelectorAll('.chip');
+        chips.forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                // Remove active class from all
+                chips.forEach(c => c.classList.remove('active'));
+                // Add to clicked
+                e.target.classList.add('active');
+                // Set filter and re-render
+                currentFilter = e.target.getAttribute('data-filter');
+                applyFiltersAndRender();
+            });
+        });
+
+        // --- Modal Logic ---
+
+        function openModal(rowData) {
+            const modalTableBody = document.getElementById('modal-table-body');
+            modalTableBody.innerHTML = ''; 
+
+            allColumns.forEach((colName, index) => {
+                if (!colName) return; 
                 
-                const cellValue = getCellValue(rowData[index]);
+                let cellValue = getCellValue(rowData[index]);
+                if (cellValue === '') cellValue = '-';
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -320,24 +608,20 @@
 
             const modal = document.getElementById('modal');
             modal.style.display = 'flex';
-            // Small delay to allow CSS transition to apply
             setTimeout(() => modal.classList.add('show'), 10);
         }
 
         function closeModal() {
             const modal = document.getElementById('modal');
             modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300); // Wait for transition
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
-        // Close modal if user clicks outside the white box
         document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
+            if (e.target === this) closeModal();
         });
 
-        // Initialize
+        // Fetch immediately on load
         fetchSheetData();
     </script>
 </body>
