@@ -6,7 +6,7 @@
     <title>Community Asset Request Log</title>
     <style>
         :root {
-            /* Dark Green Theme */
+            /* Header Theme */
             --header-bg: #1e3128;
             --header-darker: #14241d;
             --accent-green: #3a8a5e;
@@ -14,24 +14,33 @@
             --text-light: #e5e7eb;
             --text-muted-dark: #9ca3af;
             
-            /* Table & Body Theme */
-            --surface: #ffffff;
-            --background: #f3f4f6;
+            /* Card Theme */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
             --text-main: #111827;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+            --border-color: #e5e7eb;
+            
+            /* Accent Colors */
+            --left-border: #d97706; /* Orange border */
+            --badge-bg: #d1fae5; /* Light green */
+            --badge-text: #065f46; /* Dark green */
+            --chip-bg: #ffedd5; /* Light orange */
+            --chip-text: #9a3412; /* Dark orange */
+            --link-color: #047857; /* Emerald green */
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--background);
+            background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
             padding: 0;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- Header Section (Matching the Image) --- */
+        /* --- Header Section --- */
         .top-section {
             background-color: var(--header-bg);
             color: var(--text-light);
@@ -41,314 +50,109 @@
             z-index: 10;
             border-bottom: 4px solid var(--accent-green);
         }
+        .header-content { max-width: 900px; margin: 0 auto; }
+        .header-title-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .title-block h1 { margin: 0; font-size: 1.5rem; font-weight: 600; color: #ffffff; }
+        .title-block p { margin: 0.25rem 0 0 0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted-dark); }
+        .live-indicator { display: flex; align-items: center; font-size: 0.85rem; color: #a7f3d0; background: rgba(52, 211, 153, 0.1); padding: 0.25rem 0.75rem; border-radius: 999px; border: 1px solid rgba(52, 211, 153, 0.2); }
+        .live-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; margin-right: 6px; animation: pulse 2s infinite; }
+        
+        .controls-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .search-wrapper { flex-grow: 1; position: relative; }
+        .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted-dark); width: 16px; height: 16px; }
+        #search-input { width: 100%; background-color: var(--header-darker); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.75rem 1rem 0.75rem 2.5rem; color: white; font-size: 0.95rem; box-sizing: border-box; outline: none; }
+        #search-input:focus { border-color: var(--accent-green); }
+        
+        .refresh-btn { background-color: var(--accent-green); color: white; border: none; border-radius: 8px; padding: 0 1.25rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+        .refresh-btn:hover { background-color: var(--accent-hover); }
+        
+        .filter-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .filter-chip { background-color: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted-dark); padding: 0.4rem 1rem; border-radius: 999px; font-size: 0.85rem; cursor: pointer; }
+        .filter-chip.active { background-color: var(--accent-green); border-color: var(--accent-green); color: white; font-weight: 600; }
 
-        .header-content {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+        .stats-bar { background-color: var(--bg-color); padding: 0.75rem 1rem; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); max-width: 900px; margin: 0 auto; }
 
-        .header-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        #loader { text-align: center; padding: 3rem; color: var(--text-muted); }
 
-        .title-block h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-        }
+        /* --- Cards Section --- */
+        .container { max-width: 800px; margin: 0 auto 2rem auto; padding: 0 1rem; display: flex; flex-direction: column; gap: 1rem; }
 
-        .title-block p {
-            margin: 0.25rem 0 0 0;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted-dark);
-        }
-
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            font-size: 0.85rem;
-            color: #a7f3d0;
-            background: rgba(52, 211, 153, 0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            border: 1px solid rgba(52, 211, 153, 0.2);
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #10b981;
-            border-radius: 50%;
-            margin-right: 6px;
-            animation: pulse 2s infinite;
-        }
-
-        /* --- Search & Controls --- */
-        .controls-row {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .search-wrapper {
-            flex-grow: 1;
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--left-border);
+            padding: 1.25rem;
             position: relative;
+            overflow: hidden;
         }
 
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted-dark);
-            width: 16px;
-            height: 16px;
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .user-info h2 { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+        .user-info p { margin: 0.2rem 0 0 0; font-size: 0.85rem; color: var(--text-secondary); }
+        
+        .tower-badge {
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+            padding: 0.35rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
         }
 
-        #search-input {
-            width: 100%;
-            background-color: var(--header-darker);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            color: white;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        #search-input::placeholder {
-            color: var(--text-muted-dark);
-        }
-
-        #search-input:focus {
-            border-color: var(--accent-green);
-        }
-
-        .refresh-btn {
-            background-color: var(--accent-green);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0 1.25rem;
-            font-weight: 600;
-            cursor: pointer;
+        .event-title { font-size: 1.05rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); }
+        
+        .event-meta {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: background-color 0.2s;
-        }
-
-        .refresh-btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        /* --- Filter Chips --- */
-        .filter-chips {
-            display: flex;
-            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
             flex-wrap: wrap;
         }
 
-        .chip {
-            background-color: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: var(--text-muted-dark);
-            padding: 0.4rem 1rem;
+        .asset-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .asset-chip {
+            background-color: var(--chip-bg);
+            color: var(--chip-text);
+            padding: 0.35rem 0.75rem;
             border-radius: 999px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .chip:hover {
-            border-color: rgba(255,255,255,0.4);
-            color: white;
-        }
-
-        .chip.active {
-            background-color: var(--accent-green);
-            border-color: var(--accent-green);
-            color: white;
-            font-weight: 600;
-        }
-
-        /* --- Stats Bar --- */
-        .stats-bar {
-            background-color: white;
-            padding: 0.75rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border);
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        /* --- Main Content --- */
-        .container {
-            max-width: 900px;
-            margin: 1.5rem auto;
-            padding: 0 1rem;
-        }
-
-        #loader {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        .table-wrapper {
-            background: var(--surface);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
-            display: none;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f9fafb;
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9rem;
-            color: var(--text-main);
-        }
-
-        tbody tr {
-            transition: background-color 0.2s ease;
-            cursor: pointer;
-        }
-
-        tbody tr:hover {
-            background-color: #f0fdf4; /* Light green hover */
-        }
-
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* --- Modal Styles --- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-content {
-            background: var(--surface);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.show .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--header-bg);
-            color: white;
-            border-radius: 16px 16px 0 0;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.1rem;
-        }
-
-        .close-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            font-size: 1.25rem;
-            line-height: 1;
-            color: white;
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            transition: background-color 0.2s;
-        }
-
-        .close-btn:hover {
-            background-color: rgba(255,255,255,0.2);
-        }
-
-        .modal-body {
-            padding: 0;
-            overflow-y: auto;
-        }
-
-        .detail-table {
-            width: 100%;
-        }
-        
-        .detail-table td {
-            padding: 0.85rem 1.25rem;
-        }
-
-        .detail-table td:first-child {
-            font-weight: 600;
-            color: var(--text-muted);
-            width: 35%;
-            background-color: #f9fafb;
-            border-right: 1px solid var(--border);
             font-size: 0.8rem;
+            font-weight: 600;
         }
+
+        .card-divider { border-top: 1px dashed #d1d5db; margin: 1rem 0; }
+
+        .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .status-chip { background-color: var(--chip-bg); color: var(--chip-text); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
+        .time-ago { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* --- Accordion Details --- */
+        .more-details-toggle {
+            color: var(--link-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            user-select: none;
+        }
+        .more-details-content {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .detail-row strong { color: var(--text-main); }
+        .timestamp-muted { margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted); font-family: monospace; }
     </style>
 </head>
 <body>
@@ -360,14 +164,11 @@
                     <h1>Community Asset Request Log</h1>
                     <p>Mana Capitol • Live from Google Sheets</p>
                 </div>
-                <div class="live-indicator">
-                    <span class="live-dot"></span> live
-                </div>
+                <div class="live-indicator"><span class="live-dot"></span> live</div>
             </div>
 
             <div class="controls-row">
                 <div class="search-wrapper">
-                    <!-- SVG Search Icon -->
                     <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -382,12 +183,12 @@
             </div>
 
             <div class="filter-chips" id="filter-chips">
-                <button class="chip active" data-filter="All">All</button>
-                <button class="chip" data-filter="T1">T1</button>
-                <button class="chip" data-filter="T2">T2</button>
-                <button class="chip" data-filter="T3">T3</button>
-                <button class="chip" data-filter="T4">T4</button>
-                <button class="chip" data-filter="T5">T5</button>
+                <button class="filter-chip active" data-filter="All">All</button>
+                <button class="filter-chip" data-filter="T1">T1</button>
+                <button class="filter-chip" data-filter="T2">T2</button>
+                <button class="filter-chip" data-filter="T3">T3</button>
+                <button class="filter-chip" data-filter="T4">T4</button>
+                <button class="filter-chip" data-filter="T5">T5</button>
             </div>
         </div>
     </div>
@@ -397,40 +198,9 @@
         <div id="last-updated">Updating...</div>
     </div>
 
-    <div class="container">
-        <div id="loader">Fetching latest requests...</div>
-        
-        <div class="table-wrapper" id="table-wrapper">
-            <table id="main-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Flat No.</th>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <!-- Rows injected here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Modal Popup -->
-    <div class="modal-overlay" id="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Request Details</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <table class="detail-table">
-                    <tbody id="modal-table-body">
-                        <!-- Details injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div id="loader">Fetching latest requests...</div>
+    <div class="container" id="cards-container">
+        <!-- Cards injected here -->
     </div>
 
     <script>
@@ -439,15 +209,12 @@
         const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
 
         let allRows = [];
-        let allColumns = [];
+        let colMap = {};
         let currentFilter = 'All';
-        
-        // Indices for the summary table
-        let dateIdx = 0, flatIdx = 1, nameIdx = 2;
 
         async function fetchSheetData() {
             document.getElementById('loader').style.display = 'block';
-            document.getElementById('table-wrapper').style.display = 'none';
+            document.getElementById('cards-container').innerHTML = '';
             document.getElementById('last-updated').innerText = 'Updating...';
 
             try {
@@ -458,57 +225,72 @@
                 
                 processData(data);
                 
-                // Update timestamp
                 const now = new Date();
                 document.getElementById('last-updated').innerText = `Updated ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
             } catch (error) {
-                document.getElementById('loader').innerText = "Error loading data. Please check connection.";
+                document.getElementById('loader').innerText = "Error loading data.";
                 console.error(error);
             }
         }
 
-        // Helper to extract clean cell value
         function getCellValue(cell) {
             if (!cell) return '';
             return (cell.f || cell.v || '').toString();
         }
 
-        // Helper to extract a sortable Date from Google Visualization cells
-        function parseGvizDate(cell) {
-            if (!cell) return 0;
-            // Sometimes it comes as a string 'Date(2026,6,15)'
-            if (cell.v && typeof cell.v === 'string' && cell.v.includes('Date')) {
-                const match = cell.v.match(/Date\((\d+),(\d+),(\d+)/);
-                if (match) {
-                    // Note: gviz months are 0-indexed (0 = Jan)
-                    return new Date(match[1], match[2], match[3]).getTime();
-                }
+        function findColumnIndex(cols, keywords) {
+            for (let word of keywords) {
+                const idx = cols.findIndex(c => c && c.toLowerCase().includes(word));
+                if (idx !== -1) return idx;
             }
-            // Fallback to formatted string parse
-            const formatted = cell.f || cell.v;
-            if (formatted) {
-                const parsed = new Date(formatted).getTime();
-                if (!isNaN(parsed)) return parsed;
+            return -1;
+        }
+
+        function calculateTimeAgo(timestampStr) {
+            if (!timestampStr) return '';
+            // Very basic parser for dd/mm/yyyy hh:mm:ss
+            let d = new Date(timestampStr);
+            if (isNaN(d.getTime()) && timestampStr.includes('/')) {
+                const parts = timestampStr.split(/[\s/:]+/);
+                if (parts.length >= 3) d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T${parts[3]||'00'}:${parts[4]||'00'}:00`);
             }
-            return 0;
+            if (isNaN(d.getTime())) return '';
+
+            const seconds = Math.floor((new Date() - d) / 1000);
+            let interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + "d ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + "h ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + "m ago";
+            return "Just now";
         }
 
         function processData(data) {
-            allColumns = data.table.cols.map(col => col ? col.label : '');
+            const cols = data.table.cols.map(col => col ? col.label : '');
+            
+            // Intelligently map columns based on keywords
+            colMap = {
+                timestamp: findColumnIndex(cols, ['timestamp']),
+                name: findColumnIndex(cols, ['name']),
+                residentType: findColumnIndex(cols, ['residing', 'type', 'tenant', 'owner']),
+                tower: findColumnIndex(cols, ['tower', 'block']),
+                flat: findColumnIndex(cols, ['flat', 'unit']),
+                event: findColumnIndex(cols, ['event', 'purpose', 'occasion']),
+                date: findColumnIndex(cols, ['date']),
+                time: findColumnIndex(cols, ['time']),
+                chairs: findColumnIndex(cols, ['chair']),
+                tables: findColumnIndex(cols, ['table']),
+                assets: findColumnIndex(cols, ['asset', 'item', 'serving']),
+                status: findColumnIndex(cols, ['status', 'payment']),
+                poc: findColumnIndex(cols, ['poc', 'point of contact']),
+                contact: findColumnIndex(cols, ['contact', 'phone', 'mobile', 'number'])
+            };
+
             let rawRows = data.table.rows.filter(row => row.c && !row.c.every(cell => cell === null));
-
-            // Find column indices
-            dateIdx = Math.max(0, allColumns.findIndex(c => c.toLowerCase().includes('date') || c.toLowerCase().includes('timestamp')));
-            flatIdx = Math.max(1, allColumns.findIndex(c => c.toLowerCase().includes('flat') || c.toLowerCase().includes('unit') || c.toLowerCase().includes('tower')));
-            nameIdx = Math.max(2, allColumns.findIndex(c => c.toLowerCase().includes('name')));
-
-            // Sort logic: Latest date first (Descending order)
-            allRows = rawRows.sort((a, b) => {
-                const dateA = parseGvizDate(a.c[dateIdx]);
-                const dateB = parseGvizDate(b.c[dateIdx]);
-                return dateB - dateA;
-            });
-
+            
+            // Sort by Timestamp/Date (newest first)
+            allRows = rawRows.reverse(); 
             applyFiltersAndRender();
         }
 
@@ -516,11 +298,12 @@
             const searchQuery = document.getElementById('search-input').value.toLowerCase();
             
             const filteredRows = allRows.filter(row => {
-                // 1. Check Quick Filter (Tower/Flat)
-                const flatVal = getCellValue(row.c[flatIdx]).toUpperCase();
-                const passesFilter = currentFilter === 'All' || flatVal.includes(currentFilter);
+                const towerVal = colMap.tower !== -1 ? getCellValue(row.c[colMap.tower]).toUpperCase() : '';
+                const flatVal = colMap.flat !== -1 ? getCellValue(row.c[colMap.flat]).toUpperCase() : '';
+                const combinedLoc = `${towerVal} ${flatVal}`;
                 
-                // 2. Check Search Query (Look through all visible text)
+                const passesFilter = currentFilter === 'All' || combinedLoc.includes(currentFilter);
+                
                 let passesSearch = true;
                 if (searchQuery) {
                     const rowText = row.c.map(cell => getCellValue(cell).toLowerCase()).join(' ');
@@ -530,98 +313,119 @@
                 return passesFilter && passesSearch;
             });
 
-            renderTable(filteredRows);
+            renderCards(filteredRows);
         }
 
-        function renderTable(rowsToRender) {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = ''; // Clear existing
-            
+        function renderCards(rowsToRender) {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = ''; 
             document.getElementById('loader').style.display = 'none';
-            document.getElementById('table-wrapper').style.display = 'block';
-
-            // Update stats
             document.getElementById('request-count').innerHTML = `<strong>${rowsToRender.length}</strong> requests shown`;
 
             if (rowsToRender.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 2rem;">No matching requests found.</td></tr>`;
+                container.innerHTML = `<div style="text-align:center; padding: 2rem; color: #6b7280;">No matching requests found.</div>`;
                 return;
             }
 
-            rowsToRender.forEach(row => {
-                const tr = document.createElement('tr');
+            rowsToRender.forEach((row, index) => {
+                // Extract data using our smart column map
+                const getVal = (key) => colMap[key] !== -1 ? getCellValue(row.c[colMap[key]]) : '';
                 
-                const dateVal = getCellValue(row.c[dateIdx]);
-                const flatVal = getCellValue(row.c[flatIdx]);
-                const nameVal = getCellValue(row.c[nameIdx]);
+                const name = getVal('name') || 'Unknown Resident';
+                const residentType = getVal('residentType') || 'Resident';
+                const tower = getVal('tower') || '-';
+                const flat = getVal('flat') || '-';
+                const event = getVal('event') || 'Event';
+                const date = getVal('date') || '';
+                const time = getVal('time') || '';
+                const timestamp = getVal('timestamp') || '';
+                const status = getVal('status') || 'Pending';
+                
+                // Construct quantity string
+                const chairs = getVal('chairs');
+                const tables = getVal('tables');
+                let quantities = [];
+                if(chairs) quantities.push(`${chairs} chairs`);
+                if(tables) quantities.push(`${tables} tables`);
+                const qtyString = quantities.length > 0 ? quantities.join(' • ') : '';
 
-                tr.innerHTML = `
-                    <td>${dateVal}</td>
-                    <td><strong>${flatVal}</strong></td>
-                    <td>${nameVal}</td>
+                // Handle Assets (assuming comma separated)
+                const rawAssets = getVal('assets');
+                const assetChipsHTML = rawAssets ? rawAssets.split(',').map(a => `<span class="asset-chip">${a.trim()}</span>`).join('') : '';
+
+                const timeAgoStr = calculateTimeAgo(timestamp);
+
+                // Hidden Details fields
+                const poc = getVal('poc');
+                const contact = getVal('contact');
+
+                const cardHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="user-info">
+                                <h2>${name}</h2>
+                                <p>${residentType}</p>
+                            </div>
+                            <div class="tower-badge">${tower} • ${flat}</div>
+                        </div>
+
+                        <div class="event-title">${event}</div>
+                        
+                        <div class="event-meta">
+                            📅 ${date} ${time ? '· ' + time : ''} ${qtyString ? '&nbsp;&nbsp; ' + qtyString : ''}
+                        </div>
+
+                        ${assetChipsHTML ? `<div class="asset-chips">${assetChipsHTML}</div>` : ''}
+
+                        <div class="card-divider"></div>
+
+                        <div class="status-row">
+                            <div class="status-chip">${status}</div>
+                            <div class="time-ago">${timeAgoStr}</div>
+                        </div>
+
+                        <!-- Accordion -->
+                        <div class="more-details-toggle" onclick="toggleDetails('details-${index}', this)">
+                            More details <span class="arrow">▼</span>
+                        </div>
+                        
+                        <div class="more-details-content" id="details-${index}">
+                            ${poc ? `<div class="detail-row"><strong>POC:</strong> ${poc}</div>` : ''}
+                            ${contact ? `<div class="detail-row"><strong>Contact:</strong> ${contact}</div>` : ''}
+                            <div class="timestamp-muted">Submitted ${timestamp}</div>
+                        </div>
+                    </div>
                 `;
-
-                // Add click event to open modal with full row data
-                tr.onclick = () => openModal(row.c);
-                tbody.appendChild(tr);
+                
+                container.innerHTML += cardHTML;
             });
         }
 
-        // --- Event Listeners for Filtering & Search ---
+        // Global function for the toggle click
+        window.toggleDetails = function(targetId, element) {
+            const detailsDiv = document.getElementById(targetId);
+            const arrow = element.querySelector('.arrow');
+            
+            if (detailsDiv.style.display === 'block') {
+                detailsDiv.style.display = 'none';
+                arrow.textContent = '▼';
+            } else {
+                detailsDiv.style.display = 'block';
+                arrow.textContent = '▲';
+            }
+        };
 
-        document.getElementById('search-input').addEventListener('input', () => {
-            applyFiltersAndRender();
-        });
-
-        const chips = document.querySelectorAll('.chip');
-        chips.forEach(chip => {
+        // Event Listeners for Filters
+        document.getElementById('search-input').addEventListener('input', applyFiltersAndRender);
+        document.querySelectorAll('.filter-chip').forEach(chip => {
             chip.addEventListener('click', (e) => {
-                // Remove active class from all
-                chips.forEach(c => c.classList.remove('active'));
-                // Add to clicked
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
                 e.target.classList.add('active');
-                // Set filter and re-render
                 currentFilter = e.target.getAttribute('data-filter');
                 applyFiltersAndRender();
             });
         });
 
-        // --- Modal Logic ---
-
-        function openModal(rowData) {
-            const modalTableBody = document.getElementById('modal-table-body');
-            modalTableBody.innerHTML = ''; 
-
-            allColumns.forEach((colName, index) => {
-                if (!colName) return; 
-                
-                let cellValue = getCellValue(rowData[index]);
-                if (cellValue === '') cellValue = '-';
-                
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${colName}</td>
-                    <td>${cellValue}</td>
-                `;
-                modalTableBody.appendChild(tr);
-            });
-
-            const modal = document.getElementById('modal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        // Fetch immediately on load
         fetchSheetData();
     </script>
 </body>
