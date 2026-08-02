@@ -1,1 +1,163 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- This meta tag is crucial for mobile responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Asset Requests</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        #loader {
+            text-align: center;
+            padding: 2rem;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+        #data-container {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+        .data-row {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .data-row:last-child {
+            margin-bottom: 0;
+        }
+        .label {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.1rem;
+        }
+        .value {
+            color: var(--text-main);
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Community Asset Requests</h1>
+    </header>
+
+    <div id="loader">Loading data from Google Sheets...</div>
+    <div id="data-container"></div>
+
+    <script>
+        // Your Google Sheet details
+        const sheetId = '1BlwK10DHJU7kFdtn6pg9VvZ9v6HNc8bzrHSLdsejXFg';
+        const gid = '705406057'; // GID for "Community Asset Request"
+        
+        // Google Visualization API endpoint
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+
+        async function fetchSheetData() {
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                
+                // The API returns a text block wrapped in a function call. 
+                // We strip the function call wrapper to get raw JSON.
+                const jsonString = text.match(/(?<=.*\().*(?=\);)/s)[0];
+                const data = JSON.parse(jsonString);
+                
+                renderData(data);
+            } catch (error) {
+                document.getElementById('loader').innerText = "Error loading data. Please make sure the sheet is public.";
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        function renderData(data) {
+            const container = document.getElementById('data-container');
+            const loader = document.getElementById('loader');
+            
+            // Extract column headers dynamically
+            const columns = data.table.cols.map(col => col.label);
+            const rows = data.table.rows;
+
+            if (!rows || rows.length === 0) {
+                loader.innerText = "No requests found.";
+                return;
+            }
+
+            // Remove loader
+            loader.style.display = 'none';
+
+            // Create a mobile-friendly card for each row
+            rows.forEach(row => {
+                // Skip completely empty rows
+                if (!row.c || row.c.every(cell => cell === null)) return;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                columns.forEach((colName, index) => {
+                    // Ignore empty columns
+                    if (!colName) return; 
+
+                    const cellData = row.c[index];
+                    // Format the cell value (handle nulls and dates)
+                    let cellValue = cellData ? (cellData.f || cellData.v) : 'N/A';
+
+                    // Create HTML for this specific piece of data
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'data-row';
+                    rowDiv.innerHTML = `
+                        <span class="label">${colName}</span>
+                        <span class="value">${cellValue}</span>
+                    `;
+                    card.appendChild(rowDiv);
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        // Fetch data immediately on load
+        fetchSheetData();
+    </script>
+</body>
+</html>
