@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Community Asset Request Log · Mana Capitol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F7F4;
+    --paper-raised:#FFFFFF;
+    --ink:#16241F;
+    --ink-soft:#4A5A54;
+    --line:#DDE3DE;
+    --green:#2F6F4E;
+    --green-soft:#E5F0EA;
+    --amber:#C98A2C;
+    --amber-soft:#FBF0DD;
+    --slate:#5B6A72;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  header.top{
+    position:sticky;top:0;z-index:20;
+    background:var(--ink);
+    color:var(--paper);
+    padding:16px 16px 14px;
+    border-bottom:3px solid var(--green);
+  }
+  .brand-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+  .brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:19px;
+    letter-spacing:-0.01em;
+  }
+  .brand small{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:500;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#9FB8AC;
+    margin-top:2px;
+  }
+  .sync-pill{
+    display:flex;align-items:center;gap:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:#CBDDD3;
+    white-space:nowrap;
+  }
+  .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:#5FBE8A;
+    box-shadow:0 0 0 0 rgba(95,190,138,0.6);
+    animation:pulse 2.2s infinite;
+    flex:none;
+  }
+  .dot.stale{background:var(--amber);animation:none;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(95,190,138,0.55);}
+    70%{box-shadow:0 0 0 6px rgba(95,190,138,0);}
+    100%{box-shadow:0 0 0 0 rgba(95,190,138,0);}
+  }
+
+  .controls{
+    margin-top:12px;
+    display:flex;
+    gap:8px;
+  }
+  .search-wrap{
+    flex:1;
+    position:relative;
+  }
+  .search-wrap input{
+    width:100%;
+    background:#1F332B;
+    border:1px solid #33473E;
+    color:var(--paper);
+    border-radius:10px;
+    padding:9px 12px 9px 32px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+  }
+  .search-wrap input::placeholder{color:#8FA79C;}
+  .search-wrap svg{
+    position:absolute;left:10px;top:50%;transform:translateY(-50%);
+    width:14px;height:14px;stroke:#8FA79C;
+  }
+  .refresh-btn{
+    background:var(--green);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:0 14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;align-items:center;gap:6px;
+    flex:none;
+  }
+  .refresh-btn:active{transform:scale(0.96);}
+  .refresh-btn svg{width:13px;height:13px;}
+  .refresh-btn.spinning svg{animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .chip-row{
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    margin-top:10px;
+    padding-bottom:2px;
+    scrollbar-width:none;
+  }
+  .chip-row::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:none;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    padding:6px 12px;
+    border-radius:100px;
+    border:1px solid #33473E;
+    background:transparent;
+    color:#CBDDD3;
+    cursor:pointer;
+  }
+  .chip.active{
+    background:var(--green);
+    border-color:var(--green);
+    color:#fff;
+  }
+
+  main{padding:14px 16px 0;max-width:640px;margin:0 auto;}
+
+  .summary-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:2px 2px 12px;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .summary-bar .count-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    color:var(--ink);
+    font-size:14px;
+  }
+
+  .card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:12px;
+    position:relative;
+    overflow:hidden;
+    padding:14px 14px 12px 16px;
+  }
+  .card::before{
+    content:"";
+    position:absolute;left:0;top:0;bottom:0;
+    width:5px;
+    background:var(--tab-color,var(--slate));
+  }
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .who .name{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    line-height:1.25;
+  }
+  .who .rtype{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:1px;
+  }
+  .badge-flat{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    font-size:12px;
+    background:var(--green-soft);
+    color:var(--green);
+    border-radius:7px;
+    padding:4px 8px;
+    white-space:nowrap;
+    flex:none;
+  }
+
+  .desc{
+    margin:9px 0 8px;
+    font-size:13.5px;
+    color:var(--ink);
+    line-height:1.4;
+  }
+
+  .meta-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 14px;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:9px;
+  }
+  .meta-grid span b{
+    color:var(--ink);
+    font-weight:600;
+  }
+  .meta-grid .mono-val{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--ink);}
+
+  .assets{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-bottom:9px;
+  }
+  .asset-tag{
+    font-size:11.5px;
+    background:var(--amber-soft);
+    color:#8A5F1B;
+    border-radius:7px;
+    padding:4px 9px;
+    font-weight:500;
+  }
+
+  .foot-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:1px dashed var(--line);
+    padding-top:9px;
+    margin-top:2px;
+  }
+  .pay-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    padding:4px 9px;
+    border-radius:7px;
+  }
+  .pay-pill.paid{background:var(--green-soft);color:var(--green);}
+  .pay-pill.pending{background:var(--amber-soft);color:#8A5F1B;}
+  .pay-pill.unknown{background:#EEF0EE;color:var(--slate);}
+
+  .ts{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#8FA398;
+  }
+
+  details.more{margin-top:8px;}
+  details.more summary{
+    list-style:none;
+    cursor:pointer;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--green);
+    font-family:'IBM Plex Mono',monospace;
+    letter-spacing:0.02em;
+  }
+  details.more summary::-webkit-details-marker{display:none;}
+  details.more summary::after{content:" ▾";}
+  details.more[open] summary::after{content:" ▴";}
+  .more-body{
+    margin-top:8px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    display:grid;
+    gap:5px;
+  }
+  .more-body a{color:var(--green);text-decoration:none;font-weight:500;}
+  .more-body a:hover{text-decoration:underline;}
+
+  .empty-state, .load-state{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-soft);
+  }
+  .empty-state .glyph, .load-state .glyph{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:32px;
+    font-weight:700;
+    color:var(--line);
+    margin-bottom:8px;
+  }
+  .load-state .glyph{
+    display:inline-block;
+    animation:spin 1s linear infinite;
+    color:var(--green);
+  }
+  .error-banner{
+    background:#FBEAE5;
+    border:1px solid #E7B9AC;
+    color:#8A3620;
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:12.5px;
+    margin-bottom:12px;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand-row">
+    <div class="brand">Community Asset Request Log
+      <small>Mana Capitol · Live from Google Sheets</small>
+    </div>
+    <div class="sync-pill">
+      <span class="dot" id="syncDot"></span>
+      <span id="syncText">syncing…</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchBox" type="text" placeholder="Search name, flat, event…" autocomplete="off">
+    </div>
+    <button class="refresh-btn" id="refreshBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-6.36L1 10"/></svg>
+      Refresh
+    </button>
+  </div>
+
+  <div class="chip-row" id="towerChips"></div>
+</header>
+
+<main>
+  <div class="summary-bar">
+    <span><span class="count-num" id="visCount">–</span> requests shown</span>
+    <span id="lastUpdatedLine">–</span>
+  </div>
+  <div id="errorSlot"></div>
+  <div id="listSlot">
+    <div class="load-state"><div class="glyph">◐</div><div>Loading the asset request log…</div></div>
+  </div>
+</main>
+
+<script>
+const SHEET_ID = "1BlwK10DHJU7kFdtn6pg9VvZ9v6HNc8bzrHSLdsejXFg";
+const GID = "705406057"; // Community Asset Request tab
+const REFRESH_MS = 60000;
+
+let allRows = [];
+let headerIndex = {};
+let activeTower = "All";
+let lastFetchedAt = null;
+
+function findCol(cols, needle){
+  const n = needle.toLowerCase();
+  for(let i=0;i<cols.length;i++){
+    const label = (cols[i].label || "").toLowerCase();
+    if(label.includes(n)) return i;
+  }
+  return -1;
+}
+
+function cellText(row, idx){
+  if(idx < 0 || !row.c || !row.c[idx]) return "";
+  const c = row.c[idx];
+  if(c.f !== undefined && c.f !== null) return String(c.f).trim();
+  if(c.v !== undefined && c.v !== null) return String(c.v).trim();
+  return "";
+}
+
+function parseTimestamp(str){
+  // Expected form: DD/MM/YYYY HH:MM:SS
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2}):(\d{2})/);
+  if(!m) return null;
+  const [ , d, mo, y, h, mi, s ] = m.map(Number);
+  return new Date(y, mo-1, d, h, mi, s);
+}
+
+function timeAgo(date){
+  if(!date) return "";
+  const diff = Math.floor((Date.now() - date.getTime())/1000);
+  if(diff < 60) return "just now";
+  if(diff < 3600) return Math.floor(diff/60)+"m ago";
+  if(diff < 86400) return Math.floor(diff/3600)+"h ago";
+  return Math.floor(diff/86400)+"d ago";
+}
+
+async function fetchSheet(){
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  const dot = document.getElementById('syncDot');
+  const syncText = document.getElementById('syncText');
+  syncText.textContent = "syncing…";
+  const errorSlot = document.getElementById('errorSlot');
+
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}&headers=1&_=${Date.now()}`;
+
+  try{
+    const res = await fetch(url, {cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const text = await res.text();
+    const jsonStr = text.substring(text.indexOf("{"), text.lastIndexOf("}")+1);
+    const data = JSON.parse(jsonStr);
+    const cols = data.table.cols;
+    const rows = data.table.rows || [];
+
+    headerIndex = {
+      timestamp: findCol(cols, "timestamp"),
+      name: findCol(cols, "name"),
+      tower: findCol(cols, "tower no"),
+      flat: findCol(cols, "flat no"),
+      residentType: findCol(cols, "resident type"),
+      desc: findCol(cols, "description of the event"),
+      eventDate: findCol(cols, "event date"),
+      eventTime: findCol(cols, "event time"),
+      assets: findCol(cols, "select required assets"),
+      chairs: findCol(cols, "no of chairs"),
+      tables: findCol(cols, "no of ss tables"),
+      poc: findCol(cols, "coordination group poc"),
+      imagesBefore: findCol(cols, "images before"),
+      imagesAfter: findCol(cols, "images after"),
+      payNote: findCol(cols, "please pay"),
+      payScreenshot: findCol(cols, "payment screenshot"),
+      contact: findCol(cols, "contact no"),
+      payStatus: findCol(cols, "payment status"),
+      payHolder: findCol(cols, "payment holder"),
+    };
+
+    allRows = rows
+      .map(r => {
+        const ts = cellText(r, headerIndex.timestamp);
+        return {
+          ts,
+          tsDate: parseTimestamp(ts),
+          name: cellText(r, headerIndex.name),
+          tower: cellText(r, headerIndex.tower),
+          flat: cellText(r, headerIndex.flat),
+          residentType: cellText(r, headerIndex.residentType),
+          desc: cellText(r, headerIndex.desc),
+          eventDate: cellText(r, headerIndex.eventDate),
+          eventTime: cellText(r, headerIndex.eventTime),
+          assets: cellText(r, headerIndex.assets),
+          chairs: cellText(r, headerIndex.chairs),
+          tables: cellText(r, headerIndex.tables),
+          poc: cellText(r, headerIndex.poc),
+          imagesBefore: cellText(r, headerIndex.imagesBefore),
+          imagesAfter: cellText(r, headerIndex.imagesAfter),
+          payNote: cellText(r, headerIndex.payNote),
+          payScreenshot: cellText(r, headerIndex.payScreenshot),
+          contact: cellText(r, headerIndex.contact),
+          payStatus: cellText(r, headerIndex.payStatus),
+          payHolder: cellText(r, headerIndex.payHolder),
+        };
+      })
+      .filter(row => row.name || row.desc || row.flat);
+
+    allRows.sort((a,b) => {
+      const ta = a.tsDate ? a.tsDate.getTime() : 0;
+      const tb = b.tsDate ? b.tsDate.getTime() : 0;
+      return tb - ta;
+    });
+
+    lastFetchedAt = new Date();
+    errorSlot.innerHTML = "";
+    dot.classList.remove('stale');
+    syncText.textContent = "live";
+    buildTowerChips();
+    render();
+  }catch(err){
+    dot.classList.add('stale');
+    syncText.textContent = "sync failed";
+    errorSlot.innerHTML = `<div class="error-banner">Couldn't refresh from Google Sheets (${err.message}). Showing the last data loaded. Will retry automatically.</div>`;
+  }finally{
+    btn.classList.remove('spinning');
+    updateLastUpdatedLine();
+  }
+}
+
+function buildTowerChips(){
+  const towers = Array.from(new Set(allRows.map(r => (r.tower||"").trim()).filter(Boolean))).sort();
+  const wrap = document.getElementById('towerChips');
+  const chips = ["All", ...towers];
+  wrap.innerHTML = chips.map(t => `<button class="chip ${t===activeTower?'active':''}" data-tower="${t}">${t}</button>`).join("");
+  wrap.querySelectorAll('.chip').forEach(el => {
+    el.addEventListener('click', () => {
+      activeTower = el.getAttribute('data-tower');
+      wrap.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      el.classList.add('active');
+      render();
+    });
+  });
+}
+
+function tabColorFor(row){
+  const status = (row.payStatus||"").trim();
+  if(status && status !== "0") return "var(--green)";
+  return "var(--amber)";
+}
+
+function payPillFor(row){
+  const status = (row.payStatus||"").trim();
+  if(!status) return {cls:"pending", label:"Payment pending"};
+  const asNum = status.replace(/[^\d.]/g,"");
+  if(asNum && Number(asNum) > 0) return {cls:"paid", label:"₹"+asNum+" · "+(row.payHolder||"recorded")};
+  return {cls:"unknown", label:status};
+}
+
+function imageLinksMarkup(str, label){
+  if(!str) return "";
+  const links = str.split(",").map(s=>s.trim()).filter(Boolean);
+  if(!links.length) return "";
+  const items = links.map((l,i)=>`<a href="${l}" target="_blank" rel="noopener">${label} ${i+1}</a>`).join(" · ");
+  return `<div>${items}</div>`;
+}
+
+function render(){
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const list = document.getElementById('listSlot');
+
+  let rows = allRows;
+  if(activeTower !== "All"){
+    rows = rows.filter(r => (r.tower||"").trim() === activeTower);
+  }
+  if(q){
+    rows = rows.filter(r =>
+      (r.name||"").toLowerCase().includes(q) ||
+      (r.flat||"").toLowerCase().includes(q) ||
+      (r.desc||"").toLowerCase().includes(q) ||
+      (r.tower||"").toLowerCase().includes(q)
+    );
+  }
+
+  document.getElementById('visCount').textContent = rows.length;
+
+  if(!rows.length){
+    list.innerHTML = `<div class="empty-state"><div class="glyph">—</div>No requests match this filter.</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map(r => {
+    const pay = payPillFor(r);
+    const assetsList = (r.assets||"").split(",").map(a=>a.trim()).filter(Boolean);
+    const qtyBits = [];
+    if(r.chairs && r.chairs !== "0") qtyBits.push(r.chairs+" chairs");
+    if(r.tables && r.tables !== "0") qtyBits.push(r.tables+" tables");
+
+    return `
+      <div class="card" style="--tab-color:${tabColorFor(r)}">
+        <div class="card-top">
+          <div class="who">
+            <div class="name">${r.name || "Unnamed resident"}</div>
+            <div class="rtype">${r.residentType || ""}</div>
+          </div>
+          <div class="badge-flat">${(r.tower||"").toUpperCase()} · ${r.flat||"—"}</div>
+        </div>
+
+        <div class="desc">${r.desc || "No event description provided."}</div>
+
+        <div class="meta-grid">
+          <span>📅 <b>${r.eventDate || "–"}</b>${r.eventTime ? " · "+r.eventTime : ""}</span>
+          ${qtyBits.length ? `<span>${qtyBits.join(" · ")}</span>` : ""}
+        </div>
+
+        ${assetsList.length ? `<div class="assets">${assetsList.map(a=>`<span class="asset-tag">${a}</span>`).join("")}</div>` : ""}
+
+        <div class="foot-row">
+          <span class="pay-pill ${pay.cls}">${pay.label}</span>
+          <span class="ts">${r.ts ? timeAgo(r.tsDate) : ""}</span>
+        </div>
+
+        <details class="more">
+          <summary>More details</summary>
+          <div class="more-body">
+            ${r.poc ? `<div><b>POC:</b> ${r.poc}</div>` : ""}
+            ${r.contact ? `<div><b>Contact:</b> ${r.contact}</div>` : ""}
+            ${r.payNote ? `<div><b>Payment note:</b> ${r.payNote}</div>` : ""}
+            ${imageLinksMarkup(r.imagesBefore, "Before photo")}
+            ${imageLinksMarkup(r.imagesAfter, "After photo")}
+            ${r.payScreenshot ? `<div><a href="${r.payScreenshot}" target="_blank" rel="noopener">Payment screenshot</a></div>` : ""}
+            <div class="ts">Submitted ${r.ts}</div>
+          </div>
+        </details>
+      </div>
+    `;
+  }).join("");
+}
+
+function updateLastUpdatedLine(){
+  const line = document.getElementById('lastUpdatedLine');
+  if(!lastFetchedAt){ line.textContent = "–"; return; }
+  line.textContent = "Updated " + timeAgo(lastFetchedAt);
+}
+
+document.getElementById('searchBox').addEventListener('input', render);
+document.getElementById('refreshBtn').addEventListener('click', fetchSheet);
+
+fetchSheet();
+setInterval(fetchSheet, REFRESH_MS);
+setInterval(updateLastUpdatedLine, 15000);
+</script>
+
+</body>
+</html>
