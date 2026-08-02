@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community Asset Request Log</title>
+    <title>Community Asset Request Tracker</title>
     <style>
         :root {
             /* Header Theme */
@@ -294,7 +294,6 @@
         let colMap = {};
         let currentFilter = 'All';
 
-        // Updated display labels to include the new columns
         const displayLabels = {
             timestamp: 'Booking Date',
             residentType: 'Resident Type',
@@ -366,15 +365,15 @@
         function processData(data) {
             const cols = data.table.cols.map(col => col ? col.label : '');
             
-            // Updated mappings strictly looking for new exact column naming
+            // Strictly check for exact terms "event date" and "event time" to prevent grabbing wrong columns
             colMap = {
                 timestamp: findColumnIndex(cols, ['timestamp']),
                 residentType: findColumnIndex(cols, ['residing', 'type', 'tenant', 'owner']),
                 tower: findColumnIndex(cols, ['tower', 'block']),
                 flat: findColumnIndex(cols, ['flat', 'unit']),
                 event: findColumnIndex(cols, ['event', 'purpose', 'occasion']),
-                date: findColumnIndex(cols, ['date']),
-                time: findColumnIndex(cols, ['time']),
+                date: findColumnIndex(cols, ['event date', 'date']),
+                time: findColumnIndex(cols, ['event time', 'time']),
                 chairs: findColumnIndex(cols, ['chair']),
                 tables: findColumnIndex(cols, ['table']),
                 assets: findColumnIndex(cols, ['asset', 'item', 'serving']),
