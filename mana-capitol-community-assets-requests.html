@@ -269,7 +269,7 @@
         function processData(data) {
             const cols = data.table.cols.map(col => col ? col.label : '');
             
-            // Intelligently map columns based on keywords
+            // Map columns but explicitly IGNORE phone, mobile, contact, email
             colMap = {
                 timestamp: findColumnIndex(cols, ['timestamp']),
                 name: findColumnIndex(cols, ['name']),
@@ -283,8 +283,8 @@
                 tables: findColumnIndex(cols, ['table']),
                 assets: findColumnIndex(cols, ['asset', 'item', 'serving']),
                 status: findColumnIndex(cols, ['status', 'payment']),
-                poc: findColumnIndex(cols, ['poc', 'point of contact']),
-                contact: findColumnIndex(cols, ['contact', 'phone', 'mobile', 'number'])
+                poc: findColumnIndex(cols, ['poc', 'point of contact'])
+                // Removed the contact & email locators completely
             };
 
             let rawRows = data.table.rows.filter(row => row.c && !row.c.every(cell => cell === null));
@@ -328,7 +328,6 @@
             }
 
             rowsToRender.forEach((row, index) => {
-                // Extract data using our smart column map
                 const getVal = (key) => colMap[key] !== -1 ? getCellValue(row.c[colMap[key]]) : '';
                 
                 const name = getVal('name') || 'Unknown Resident';
@@ -341,7 +340,6 @@
                 const timestamp = getVal('timestamp') || '';
                 const status = getVal('status') || 'Pending';
                 
-                // Construct quantity string
                 const chairs = getVal('chairs');
                 const tables = getVal('tables');
                 let quantities = [];
@@ -349,15 +347,12 @@
                 if(tables) quantities.push(`${tables} tables`);
                 const qtyString = quantities.length > 0 ? quantities.join(' • ') : '';
 
-                // Handle Assets (assuming comma separated)
                 const rawAssets = getVal('assets');
                 const assetChipsHTML = rawAssets ? rawAssets.split(',').map(a => `<span class="asset-chip">${a.trim()}</span>`).join('') : '';
 
                 const timeAgoStr = calculateTimeAgo(timestamp);
 
-                // Hidden Details fields
                 const poc = getVal('poc');
-                const contact = getVal('contact');
 
                 const cardHTML = `
                     <div class="card">
@@ -391,7 +386,6 @@
                         
                         <div class="more-details-content" id="details-${index}">
                             ${poc ? `<div class="detail-row"><strong>POC:</strong> ${poc}</div>` : ''}
-                            ${contact ? `<div class="detail-row"><strong>Contact:</strong> ${contact}</div>` : ''}
                             <div class="timestamp-muted">Submitted ${timestamp}</div>
                         </div>
                     </div>
@@ -401,7 +395,6 @@
             });
         }
 
-        // Global function for the toggle click
         window.toggleDetails = function(targetId, element) {
             const detailsDiv = document.getElementById(targetId);
             const arrow = element.querySelector('.arrow');
@@ -415,7 +408,6 @@
             }
         };
 
-        // Event Listeners for Filters
         document.getElementById('search-input').addEventListener('input', applyFiltersAndRender);
         document.querySelectorAll('.filter-chip').forEach(chip => {
             chip.addEventListener('click', (e) => {
